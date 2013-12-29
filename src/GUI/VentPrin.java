@@ -160,7 +160,7 @@ private void botonResolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         return;
     if(esInvalido(CampoNumDos.getText()))
         return;
-    int uno = Integer.parseInt(CampoNumDos.getText());
+    int uno = Integer.parseInt(CampoNumUno.getText());
     int dos = Integer.parseInt(CampoNumDos.getText());
     UpdateJList(p.init(uno, dos));
 }//GEN-LAST:event_botonResolverActionPerformed
