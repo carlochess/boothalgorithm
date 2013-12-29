@@ -182,9 +182,12 @@ private void jMenuItem1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 private void UpdateJList(ArrayList<String> g ){
     listModel = new DefaultListModel<String>();
     if(null != g){
+        String k="";
         for(String p : g){
              listModel.addElement(p);
-        }    
+             k = p;
+        }
+        imprimirRes(k);
     }
     ListaSolución.setModel(listModel);     
     ListaSolución.setSelectedIndex(0);
@@ -203,17 +206,6 @@ public static boolean isNumeric(String str)
   return true;  
 }
 
-    /**
-     
-    public static void main(String args[]) {
-       
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new VentPrin().setVisible(true);
-            }
-        });
-    }*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField CampoNumDos;
     private javax.swing.JTextField CampoNumUno;
@@ -230,5 +222,11 @@ public static boolean isNumeric(String str)
 
     private boolean esInvalido(String text) {
         return !isNumeric(text);
+    }
+
+    private void imprimirRes(String k) {
+        int longitud = k.indexOf(" ");
+        String numero = k.substring(0,longitud)+k.substring(longitud+7,longitud*2+7);
+        JOptionPane.showMessageDialog(null, numero+"\n"+Integer.parseInt(numero, 2));
     }
 }
