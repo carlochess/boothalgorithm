@@ -3,6 +3,7 @@ package GUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -25,14 +26,10 @@ public class SplashScreen extends JWindow {
     int x = (screen.width-width)/2;
     int y = (screen.height-height)/2;
     setBounds(x,y,width,height);
-    String imagen = "../res/oreilly.gif";
-    BufferedImage wPic=null;
-        try {
-            wPic = ImageIO.read(this.getClass().getResource(imagen));
-        } catch (IOException ex) {
-            
-        }
-    JLabel label = new JLabel(new ImageIcon(wPic));
+    //
+    URL imageurl = getClass().getResource("/res/splash.gif");
+    Image myPicture = Toolkit.getDefaultToolkit().getImage(imageurl);
+    JLabel label = new JLabel(new ImageIcon(myPicture));
     JLabel copyrt = new JLabel
       ("Copyleft 2014, Arquitectura II", JLabel.CENTER);
     copyrt.setFont(new Font("Sans-Serif", Font.BOLD, 12));
@@ -50,7 +47,7 @@ public class SplashScreen extends JWindow {
 
   public void showSplashAndExit() {
     showSplash();
-    VentPrin p = new VentPrin();
+    VentanaPrincipal p = new VentanaPrincipal();
   }
 
   public static void main(String[] args) {
