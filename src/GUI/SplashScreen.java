@@ -1,12 +1,7 @@
 package GUI;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class SplashScreen extends JWindow {
@@ -19,7 +14,6 @@ public class SplashScreen extends JWindow {
     JPanel content = (JPanel)getContentPane();
     content.setBackground(Color.white);
 
-    // Set the window's bounds, centering the window
     int width = 450;
     int height =115;
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();

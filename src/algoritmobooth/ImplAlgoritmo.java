@@ -10,32 +10,12 @@ public class ImplAlgoritmo {
     // Atributos
     /*------------------------------------------*/
     int nVeces;
-    
+    String separador;
     /*------------------------------------------*/
     // Métodos
     /*------------------------------------------*/
     public ImplAlgoritmo(){
         nVeces = 0;
-    }
-    /* Función que permite mostrar el resultado*/
-    private String display(int a[], int q[], int Q1, int m[], String codOP) {
-        String g="";
-        for (int i = 0; i < nVeces; i++) {
-            g+=a[i];
-        }
-        g+="       ";
-        for (int i = 0; i < nVeces; i++) {
-            g+=(q[i]);
-        }
-        g+=("       ");
-        g+=(Q1);
-        g+=("       ");
-        for (int i = 0; i < nVeces; i++) {
-            g+=(m[i]);
-        }
-        g+=("       ");
-        g+=codOP;
-        return g;
     }
         
     /** Función que convierte de decimal a binario  **/
@@ -94,49 +74,66 @@ public class ImplAlgoritmo {
     }          
     /*------------------------------------------*/
     // Función que efectua el algotimo de booth
-    private ArrayList<String> boothAlgorith(int[] m, int[] q) {
+    private ArrayList<ArrayList<String> > boothAlgorith(int[] m, int[] q) {
         int a[] = decABin(0, nVeces);
         int Q1 = 0;
         int count = nVeces;
         int m1[] = new int[nVeces];
-        ArrayList<String> arr = new ArrayList<String>();
-        
-        arr.add("A       Q       Q-1       M       operación");
-        arr.add("---------------------------");
-        arr.add(display(a,q,Q1,m,"Inicial"));
+        ArrayList<ArrayList<String> > arr = new ArrayList<ArrayList<String>>();
         
         int nVecesMenosUna = nVeces-1;
         
         for (int i = 0; i < count; i++) {
-            arr.add(i+"---------------------------");
+            ArrayList<String> temp = new ArrayList<String>();
             System.arraycopy(m, 0, m1, 0, nVeces);
-            
+            int j = i;
             if (q[nVecesMenosUna] == 0 && Q1 == 1) {
                 a = sumar(a, m1);
-                arr.add(display(a,q,Q1,m," A<~A+M"));
+                arr.add(annadirAlArreglo(a,q,Q1,m," A<~A+M", i)); j=-1;
             }
             else if (q[nVecesMenosUna] == 1 && Q1 == 0) {
                 int c[] = complemento(m1);
                 a = sumar(a, c);
-                arr.add(display(a,q,Q1,m," A<~A-M"));
+                arr.add(annadirAlArreglo(a,q,Q1,m," A<~A-M", i)); j =-1;
             }
-            
             Q1 = q[nVecesMenosUna];
             desplazamientoAritmetico(a, q);
-            arr.add(display(a,q,Q1,m," desplazamiento"));         
-        }        
+            arr.add(annadirAlArreglo(a,q,Q1,m," desplazamiento", j));
+        }
         return arr;
     }
     /*------------------------------------------*/
     // Función inicial
     /*------------------------------------------*/
-    public ArrayList<String> init(int x,int y)
+    public ArrayList<ArrayList<String> > init(int x,int y)
     {
         nVeces = (rango(x)>rango(y))?rango(x):rango(y);
         int[] x1 = decABin(x, nVeces);
         int[] y1 = decABin(y, nVeces);
-                
         return boothAlgorith(x1,y1);
     }
-    
+
+    private ArrayList<String> annadirAlArreglo(int[] a, int[] q, int Q1, int[] m, String string, int j) {
+        ArrayList<String> temp = new ArrayList<String>();
+        String g="";
+        if(j!=-1)
+            g+= j;
+        temp.add(g);g="";
+        for (int i = 0; i < nVeces; i++) {
+            g+=a[i];
+        }
+        temp.add(g);g="";
+        for (int i = 0; i < nVeces; i++) {
+            g+=(q[i]);
+        }
+        temp.add(g);g="";
+        g+=(Q1);
+        temp.add(g);g="";
+        for (int i = 0; i < nVeces; i++) {
+            g+=(m[i]);
+        }
+        temp.add(g);g="";
+        temp.add(string);
+        return temp;
+    }    
 }
