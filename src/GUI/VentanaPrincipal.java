@@ -38,7 +38,9 @@ public class VentanaPrincipal extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
+    /**
+     * Crea el único listener para el único botón :3
+     */
     private void initListeners() {
         botonResolver.addActionListener(new ActionListener() {
             @Override
@@ -48,16 +50,9 @@ public class VentanaPrincipal extends JFrame {
         });
         
     }
-    
-    private Boolean requiereExplicacion(String g){
-        return (g.contains("<~")|| g.contains("desplazamiento"));
-    }
-    
-    public static void main(String ... args)
-    {
-        VentanaPrincipal p = new VentanaPrincipal();
-    }
-    
+    /**
+     * Inicializa la GUI
+     */
     private void initGUI() {
         listModel = new DefaultListModel();
         mainPanel = new JPanel();
@@ -103,20 +98,28 @@ public class VentanaPrincipal extends JFrame {
         mainPanel.add(jScrollPane1);
         mainPanel.add(panel4);
     }
-
+    /**
+     * Verifica si los datos ingresados en los JTextfield son válidos
+     * @param evt 
+     */
     private void botonResolverActionPerformed(java.awt.event.ActionEvent evt) {
-        if (esInvalido(CampoNumUno.getText())) {
+        if (isNumeric(CampoNumUno.getText())) {
             return;
         }
-        if (esInvalido(CampoNumDos.getText())) {
+        if (isNumeric(CampoNumDos.getText())) {
             return;
         }
         int uno = Integer.parseInt(CampoNumUno.getText());
         int dos = Integer.parseInt(CampoNumDos.getText());
-        UpdateJList(uno, dos);
+        UpdateJTable(uno, dos);
     }
-
-    private void UpdateJList(int uno, int dos) {
+    /**
+     * Método que actualiza el modelo de la tabla según la información
+     * generada.
+     * @param uno
+     * @param dos 
+     */
+    private void UpdateJTable(int uno, int dos) {
         ImplAlgoritmo p = new ImplAlgoritmo();
         removerFilas(modelo);
         ArrayList<ArrayList<String>> g = p.init(uno, dos);
@@ -127,20 +130,24 @@ public class VentanaPrincipal extends JFrame {
             imprimirRes();
         }else{System.out.println("g sin data");}
     }
-
-    public static boolean isNumeric(String str) {
+    /**
+     * Método encargado  de verificar si una cadena puede convertirse
+     * en un número.
+     * @param str
+     * @return 
+     */
+    public boolean isNumeric(String str) {
         try {
             double d = Double.parseDouble(str);
         } catch (NumberFormatException nfe) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
-
-    private boolean esInvalido(String text) {
-        return !isNumeric(text);
-    }
-
+    /**
+     * Convierte el resultado de binario a decimal y lo imprime en la
+     * GUI
+     */
     private void imprimirRes() {
         String a = (String) modelo.getValueAt(modelo.getRowCount()-1, 1);
         String b = (String) modelo.getValueAt(modelo.getRowCount()-1, 2);
@@ -150,7 +157,11 @@ public class VentanaPrincipal extends JFrame {
         resultadoBin.setText(numero);
         resultadoDec.setText("Resultado: "+res+" => ");
     }
-
+    /**
+     * Convierte un número binario (complemento dos) en decimal
+     * @param bin
+     * @return 
+     */
     public static int binToDec(String bin) {
         int n = bin.length() - 1;
         int resultado = -1 * (int) Math.pow(2, n) * ((bin.charAt(0) == '1') ? 1 : 0);
@@ -159,12 +170,18 @@ public class VentanaPrincipal extends JFrame {
         }
         return resultado;
     }
-
+    /**
+     * Limpia el modelo de la tabla
+     * @param model 
+     */
     private void removerFilas(DefaultTableModel model) {
         int rows = model.getRowCount();
         for (int i = rows - 1; i >= 0; i--) {
             model.removeRow(i);
         }
     }
-    
+    public static void main(String ... args)
+    {
+        VentanaPrincipal p = new VentanaPrincipal();
+    }
 }

@@ -18,7 +18,7 @@ public class ImplAlgoritmo {
         nVeces = 0;
     }
         
-    /** Función que convierte de decimal a binario  **/
+    /* Función que convierte de decimal a binario  **/
     private int[] decABin(int n, int longitud) {
         int[] bin = new int[longitud];
         int ctr = longitud-1;
@@ -43,7 +43,8 @@ public class ImplAlgoritmo {
         n = (n>=0)? n+1 : n;
         return (int)(Math.ceil(Math.log10(Math.abs(n))/Math.log10(2))+1);
     }
-    /*Realiza el desplazamiento aritmetico entre A y Q*/
+    
+    /*Realiza el desplazamiento aritmetico entre A, Q y Q-1*/
     private void desplazamientoAritmetico(int a[], int q[]) {
         int ultimoIndice = a.length-1;
         int b = a[ultimoIndice];
@@ -64,7 +65,7 @@ public class ImplAlgoritmo {
         }
         return sum;
     }
-    /* Función que saca el complemento de un número binario */
+    /* Función que retorna el complemento de un número binario */
     private int[] complemento(int m1[]) {
         int z[] = decABin(1, nVeces);
         for (int i = 0; i < nVeces; i++) {
@@ -79,12 +80,12 @@ public class ImplAlgoritmo {
         int Q1 = 0;
         int count = nVeces;
         int m1[] = new int[nVeces];
-        ArrayList<ArrayList<String> > arr = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String> > arr = new ArrayList<>();
         
         int nVecesMenosUna = nVeces-1;
         
         for (int i = 0; i < count; i++) {
-            ArrayList<String> temp = new ArrayList<String>();
+            ArrayList<String> temp = new ArrayList<>();
             System.arraycopy(m, 0, m1, 0, nVeces);
             int j = i;
             if (q[nVecesMenosUna] == 0 && Q1 == 1) {
@@ -102,19 +103,20 @@ public class ImplAlgoritmo {
         }
         return arr;
     }
-    /*------------------------------------------*/
-    // Función inicial
-    /*------------------------------------------*/
-    public ArrayList<ArrayList<String> > init(int x,int y)
-    {
-        nVeces = (rango(x)>rango(y))?rango(x):rango(y);
-        int[] x1 = decABin(x, nVeces);
-        int[] y1 = decABin(y, nVeces);
-        return boothAlgorith(x1,y1);
-    }
-
+    
+    /**
+     * Función que retorna un arreglo de lista que contiene la reunión 
+     * de a, q, q1, m, código de la operación y j=paso.
+     * @param a
+     * @param q
+     * @param Q1
+     * @param m
+     * @param string
+     * @param j
+     * @return 
+     */
     private ArrayList<String> annadirAlArreglo(int[] a, int[] q, int Q1, int[] m, String string, int j) {
-        ArrayList<String> temp = new ArrayList<String>();
+        ArrayList<String> temp = new ArrayList<>();
         String g="";
         if(j!=-1)
             g+= j;
@@ -135,5 +137,16 @@ public class ImplAlgoritmo {
         temp.add(g);g="";
         temp.add(string);
         return temp;
-    }    
+    } 
+    
+    /*------------------------------------------*/
+    // Función inicial
+    /*------------------------------------------*/
+    public ArrayList<ArrayList<String> > init(int x,int y)
+    {
+        nVeces = (rango(x)>rango(y))?rango(x):rango(y);
+        int[] x1 = decABin(x, nVeces);
+        int[] y1 = decABin(y, nVeces);
+        return boothAlgorith(x1,y1);
+    }
 }
