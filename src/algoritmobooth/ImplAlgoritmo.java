@@ -85,7 +85,6 @@ public class ImplAlgoritmo {
         int nVecesMenosUna = nVeces-1;
         
         for (int i = 0; i < count; i++) {
-            ArrayList<String> temp = new ArrayList<>();
             System.arraycopy(m, 0, m1, 0, nVeces);
             int j = i;
             if (q[nVecesMenosUna] == 0 && Q1 == 1) {
