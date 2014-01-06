@@ -6,6 +6,7 @@ import javax.swing.*;
 
 public class SplashScreen extends JWindow {
   private int duration;
+  
   public SplashScreen(int d) {
     duration = d;
   }
@@ -29,8 +30,7 @@ public class SplashScreen extends JWindow {
     copyrt.setFont(new Font("Sans-Serif", Font.BOLD, 12));
     content.add(label, BorderLayout.CENTER);
     content.add(copyrt, BorderLayout.SOUTH);
-    Color oraRed = new Color(156, 20, 20,  255);
-    content.setBorder(BorderFactory.createLineBorder(oraRed, 10));
+    content.setBorder(BorderFactory.createLineBorder(Color.GRAY, 10));
 
     setVisible(true);
 

@@ -25,6 +25,7 @@ public class VentanaPrincipal extends JFrame {
     Object[][] data;
     DefaultTableModel modelo;
     JMenuItem mi1, mi2;
+    JCheckBox checkbox;
     //----------
     // Métodos
     //----------
@@ -35,7 +36,7 @@ public class VentanaPrincipal extends JFrame {
         initListeners();
         add(mainPanel);
         pack();
-        setSize(500, 400);
+        setMinimumSize(new Dimension(400, 500));
         setTitle("Algortimo de Booth");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -61,6 +62,25 @@ public class VentanaPrincipal extends JFrame {
                 botonResolverActionPerformed(evt);
             }
         });
+        ListaSolución.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int row = ListaSolución.rowAtPoint(e.getPoint());
+                int column = ListaSolución.columnAtPoint(e.getPoint());
+                if (row >= 0 && column==5) {
+                    VetanaExplicación a = new VetanaExplicación(getRowAt(row));
+                    a.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                }
+            }
+            public String[] getRowAt(int row) {
+                String[] result = new String[7];
+                for (int i = 0; i < 6; i++) {
+                    result[i] = (String)ListaSolución.getModel().getValueAt(row, i);
+                }
+                result[6] = (String)ListaSolución.getModel().getValueAt(row+1, 1);
+                return result;
+            }
+        });
         mi1.addActionListener(new ActionListener() {
 
             public static final String creditos = "Carlos\nhttps://github.com/carlochess/boothalgorithm/";
@@ -78,15 +98,17 @@ public class VentanaPrincipal extends JFrame {
 
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dispose();
+                System.exit(0);
             }
         });
+        
     }
 
     /**
      * Inicializa la GUI
      */
     private void initGUI() {
+        
         listModel = new DefaultListModel();
         mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -97,6 +119,7 @@ public class VentanaPrincipal extends JFrame {
         CampoNumUno = new JTextField(20);
         //CampoNumUno.setPreferredSize(new Dimension(100, 20));
         panel.add(CampoNumUno);
+        CampoNumUno.setDragEnabled(true);
         //----------------------------------------
         panel2 = new JPanel();
         panel2.setBorder(new TitledBorder("Numero Uno"));
@@ -104,15 +127,23 @@ public class VentanaPrincipal extends JFrame {
         CampoNumDos = new JTextField(20);
         //CampoNumDos.setPreferredSize(new Dimension(100, 20));
         panel2.add(CampoNumDos);
+        CampoNumDos.setDragEnabled(true);
+        
         //----------------------------------------
         panel3 = new JPanel();
-
         botonResolver = new JButton("Calcular");
+        botonResolver.setTransferHandler(new TransferHandler("text"));
+        checkbox = new JCheckBox("Paso a Paso", true);
+        checkbox.setFocusable(false);
         panel3.add(botonResolver);
+        panel3.add(checkbox);
         //---------------------------------------- 
         String[] columna = new String[]{"N", "A", "Q", "Q-1", "M", "OP"};
         modelo = new DefaultTableModel(new Object[0][0], columna);
         ListaSolución = new JTable(modelo);
+        ListaSolución.getColumn("N").setPreferredWidth(20);
+        ListaSolución.getColumn("Q-1").setPreferredWidth(20);
+        ListaSolución.getColumn("OP").setPreferredWidth(150);
         ListaSolución.setFillsViewportHeight(true);
         jScrollPane1 = new JScrollPane(ListaSolución);
         jScrollPane1.setPreferredSize(new Dimension(500, 300));
