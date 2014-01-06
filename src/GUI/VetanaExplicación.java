@@ -141,15 +141,45 @@ public class VetanaExplicación extends javax.swing.JFrame {
         String AsinUltimo=A.substring(0,A.length()-2);
         String Qsin=Q.substring(0,Q.length()-1);
         String QsinUltimo=Q.substring(0,Q.length()-2); 
-        String s = String.format("<center><h1> %s</h1></center><br>"
-                + "<p> Texto </p>"
-                + "<p><FONT color=\"green\">%s</font>%s-<FONT color=\"red\">%s</font> ___ %s-<FONT color=\"yellow\">%s</font>___ %s </p>"
-                + "<p><FONT color=\"green\">%s</font><FONT color=\"green\">%s</font>-%s ___ <FONT color=\"red\">%s</font>-%s___ <FONT color=\"yellow\">%s</font> </p>"
-                , tipoOP, primeroA, sinAsin, ultimoA, Qsin, ultimoQ, Q1, primeroA,primeroA,AsinUltimo, ultimoA,QsinUltimo, ultimoQ);
-        jTextPane1.setText(s);
+        String algo = "<table style=\"width: 100%;\" border=\"1\">";
+        String tabla = String.format(
+                "<center><h1> %s  </h1></center><br>"
+                + "<p> Texto </p> %s"+
+        "<tbody><tr>"+
+         " <td style=\"height: 19px; text-align: center;\">A</td>"+
+         " <td style=\"text-align: center;\">Q</td>"+
+         " <td style=\"text-align: center;\">Q-1</td>"+
+        "</tr>"+
+        "<tr>"+
+          "<td style=\"text-align: center; width: 538.667px;\"><FONT color=\"green\">%s</font>%s<FONT color=\"red\">%s</font></td>"+
+          "<td style=\"text-align: center; width: 538.667px;\">%s<FONT color=\"blue\">%s</font></td>"+
+          "<td style=\"text-align: center; width: 200px;\"> %s </td>"+
+        "</tr>"+
+        "<tr>"+
+          "<td style=\"text-align: center;\"><FONT color=\"green\">%s</font><FONT color=\"green\">%s</font>%s</td>"+
+          "<td style=\"text-align: center;\"><FONT color=\"red\">%s</font>%s</td>"+
+          "<td style=\"text-align: center;\"><FONT color=\"blue\">%s</font></td>"+
+        "</tr></tbody> </table>",
+       tipoOP, algo,primeroA, sinAsin, ultimoA, Qsin, ultimoQ, Q1, primeroA,primeroA,AsinUltimo, ultimoA,QsinUltimo, ultimoQ);
+        jTextPane1.setText(tabla);
     }
     private void setTextInit() {
         String s = String.format("<center><h1> %s</h1></center><br>", tipoOP);
+        String cuerpo = "<div style=\"text-align: center;\">Dados los números %1 y %2, es necesario:<br>"+
+      "<br>"+
+      "1. Convertirlos a binario complemento a dos<br>"+
+      "<br>"+
+      "1 = bin(%1)<br>"+
+      "%2 = bin(%2)<br>"+
+      "<br>"+
+      "2. Igualar ambos al mismo número de bits<br>"+
+      "<br>"+
+      "%1 = fin(%1)<br>"+
+      "%2 = fin(%2)<br>"+
+      "<br>"+
+      "3. Inicializar a A en %A (Asignarle tantos ceros como dígitos tenga M)<br>"+
+      "<br>"+
+      "4. Inicializar Q1 en 0</div>";
         jTextPane1.setText(s);
     }
     private void setText() {
