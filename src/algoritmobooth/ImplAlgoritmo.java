@@ -106,6 +106,19 @@ public class ImplAlgoritmo {
     }
     
     /**
+     * Convierte un número binario (complemento dos) en decimal
+     * @param bin
+     * @return 
+     */
+    public int binToDec(String bin) {
+        int n = bin.length() - 1;
+        int resultado = -1 * (int) Math.pow(2, n) * ((bin.charAt(0) == '1') ? 1 : 0);
+        for (int i = 1, m = n - 1; i <= n; i++, m--) {
+            resultado += ((bin.charAt(i) == '1') ? 1 : 0) * (int) Math.pow(2, m);
+        }
+        return resultado;
+    }
+    /**
      * Función que retorna un arreglo de lista que contiene la reunión 
      * de a, q, q1, m, código de la operación y j=paso.
      * @param a

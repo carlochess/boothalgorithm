@@ -26,6 +26,7 @@ public class VentanaPrincipal extends JFrame {
     DefaultTableModel modelo;
     JMenuItem mi1, mi2;
     JCheckBox checkbox;
+    ImplAlgoritmo p;
     //----------
     // Métodos
     //----------
@@ -69,14 +70,15 @@ public class VentanaPrincipal extends JFrame {
                 int column = ListaSolución.columnAtPoint(e.getPoint());
                 if (row >= 0 && column==5) {
                     VetanaExplicación a = new VetanaExplicación(getRowAt(row));
-                    a.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                 }
             }
             public String[] getRowAt(int row) {
                 String[] result = new String[7];
-                for (int i = 0; i < 6; i++) {
+                row = (row==0)? 1:row-1;
+                for (int i = 0; i < 5; i++) {
                     result[i] = (String)ListaSolución.getModel().getValueAt(row, i);
                 }
+                result[5] = (String)ListaSolución.getModel().getValueAt(row+1, 5);
                 result[6] = (String)ListaSolución.getModel().getValueAt(row+1, 1);
                 return result;
             }
@@ -186,7 +188,7 @@ public class VentanaPrincipal extends JFrame {
      * @param dos 
      */
     private void UpdateJTable(int uno, int dos) {
-        ImplAlgoritmo p = new ImplAlgoritmo();
+        p = new ImplAlgoritmo();
         removerFilas(modelo);
         ArrayList<ArrayList<String>> g = p.init(uno, dos);
         if (g != null) {
@@ -222,7 +224,7 @@ public class VentanaPrincipal extends JFrame {
         String a = (String) modelo.getValueAt(modelo.getRowCount() - 1, 1);
         String b = (String) modelo.getValueAt(modelo.getRowCount() - 1, 2);
         String numero = a + b;
-        int res = binToDec(numero);
+        int res = p.binToDec(numero);
         resultadoBin.setText(numero);
         resultadoDec.setText("Resultado: " + res + " => ");
         if (res == 7) {
@@ -230,19 +232,6 @@ public class VentanaPrincipal extends JFrame {
         }
     }
 
-    /**
-     * Convierte un número binario (complemento dos) en decimal
-     * @param bin
-     * @return 
-     */
-    public static int binToDec(String bin) {
-        int n = bin.length() - 1;
-        int resultado = -1 * (int) Math.pow(2, n) * ((bin.charAt(0) == '1') ? 1 : 0);
-        for (int i = 1, m = n - 1; i <= n; i++, m--) {
-            resultado += ((bin.charAt(i) == '1') ? 1 : 0) * (int) Math.pow(2, m);
-        }
-        return resultado;
-    }
 
     /**
      * Limpia el modelo de la tabla

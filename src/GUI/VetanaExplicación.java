@@ -1,5 +1,7 @@
 package GUI;
 
+import java.awt.Dimension;
+
 public class VetanaExplicación extends javax.swing.JFrame {
     String tipoOP,OP;
     String Q, Q1,A,M,ultimoQ;
@@ -35,14 +37,15 @@ public class VetanaExplicación extends javax.swing.JFrame {
             OP="init";
             setTextInit();
         }
-        else{
-            System.out.println("¿Será?");
-        }
     }
     VetanaExplicación(String[] rowAt) {
         initComponents();
         initStr(rowAt);
-        this.setVisible(true);
+        setMinimumSize(new Dimension(400, 300));
+        setTitle("Explicación operación "+tipoOP);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     /**
