@@ -3,6 +3,8 @@ package GUI;
 import algoritmobooth.ImplAlgoritmo;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -20,16 +22,21 @@ public class VentanaPrincipal extends JFrame {
     JTextField CampoNumUno, CampoNumDos, resultadoBin;
     JTable ListaSolución;
     JLabel button, button2, resultadoDec;
-    JButton botonResolver;
+    JButton botonResolver, i, j;
     JPanel mainPanel, panel, panel2, panel3, panel4;
     Object[][] data;
     DefaultTableModel modelo;
     JMenuItem mi1, mi2;
     JCheckBox checkbox;
     ImplAlgoritmo p;
+    boolean sel=false, calcularMaspasos= false;
+    int posicion;
+    ArrayList<ArrayList<String>> g;
     //----------
     // Métodos
     //----------
+    private JPanel panel5;
+    private JPanel panel6;
 
     public VentanaPrincipal() {
         initGUI();
@@ -57,10 +64,38 @@ public class VentanaPrincipal extends JFrame {
      */
     private void initListeners() {
         botonResolver.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonResolverActionPerformed(evt);
+                botonResolverActionPerformed();
+            }
+        });
+        j.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    if (g != null && calcularMaspasos) {
+                        int longitudMaxima = g.size()-2;
+                        if (posicion >1)
+                        {
+                            modelo.removeRow(posicion-1);
+                            posicion--;
+                            if(posicion == longitudMaxima+1) BorrarRes();
+                        }
+                    }
+            }
+        });
+        // agregar
+        i.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                if (g != null && calcularMaspasos) {
+                    int longitudMaxima = g.size()-1;
+                        if (posicion <= longitudMaxima)
+                        {
+                            modelo.addRow(g.get(posicion).toArray());
+                            posicion++;
+                            if (posicion == longitudMaxima+1)imprimirRes();
+                        }
+                    } 
             }
         });
         ListaSolución.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -69,6 +104,7 @@ public class VentanaPrincipal extends JFrame {
                 int row = ListaSolución.rowAtPoint(e.getPoint());
                 int column = ListaSolución.columnAtPoint(e.getPoint());
                 if (row >= 0 && column==5) {
+                    System.out.println(row);
                     VetanaExplicación a = new VetanaExplicación(getRowAt(row));
                 }
             }
@@ -104,6 +140,15 @@ public class VentanaPrincipal extends JFrame {
             }
         });
         
+        checkbox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                if (event.getItemSelectable() == checkbox) {
+                    sel = checkbox.isSelected();
+                    i.setEnabled(sel);
+                    j.setEnabled(sel);
+                }
+            }
+        });
     }
 
     /**
@@ -118,7 +163,7 @@ public class VentanaPrincipal extends JFrame {
         panel = new JPanel();
         panel.setBorder(new TitledBorder("Numero Dos"));
 
-        CampoNumUno = new JTextField(20);
+        CampoNumUno = new JTextField("6", 20);
         //CampoNumUno.setPreferredSize(new Dimension(100, 20));
         panel.add(CampoNumUno);
         CampoNumUno.setDragEnabled(true);
@@ -126,42 +171,62 @@ public class VentanaPrincipal extends JFrame {
         panel2 = new JPanel();
         panel2.setBorder(new TitledBorder("Numero Uno"));
 
-        CampoNumDos = new JTextField(20);
+        CampoNumDos = new JTextField("5", 20);
         //CampoNumDos.setPreferredSize(new Dimension(100, 20));
         panel2.add(CampoNumDos);
         CampoNumDos.setDragEnabled(true);
-        
+        panel.setBackground(Color.WHITE);
+        panel2.setBackground(Color.WHITE);
         //----------------------------------------
         panel3 = new JPanel();
         botonResolver = new JButton("Calcular");
         botonResolver.setTransferHandler(new TransferHandler("text"));
-        checkbox = new JCheckBox("Paso a Paso", true);
+        checkbox = new JCheckBox("Paso a Paso", false);
         checkbox.setFocusable(false);
+        panel3.setBackground(Color.WHITE);
         panel3.add(botonResolver);
         panel3.add(checkbox);
         //---------------------------------------- 
-        String[] columna = new String[]{"N", "A", "Q", "Q-1", "M", "OP"};
-        modelo = new DefaultTableModel(new Object[0][0], columna);
-        ListaSolución = new JTable(modelo);
-        ListaSolución.getColumn("N").setPreferredWidth(20);
-        ListaSolución.getColumn("Q-1").setPreferredWidth(20);
-        ListaSolución.getColumn("OP").setPreferredWidth(150);
-        ListaSolución.setFillsViewportHeight(true);
-        jScrollPane1 = new JScrollPane(ListaSolución);
-        jScrollPane1.setPreferredSize(new Dimension(500, 300));
+        panel5 = new JPanel();
+            
+            String[] columna = new String[]{"N", "A", "Q", "Q-1", "M", "OP"};
+            modelo = new DefaultTableModel(new Object[0][0], columna);
+            ListaSolución = new JTable(modelo);
+            ListaSolución.getColumn("N").setPreferredWidth(20);
+            ListaSolución.getColumn("Q-1").setPreferredWidth(20);
+            ListaSolución.getColumn("OP").setPreferredWidth(150);
+            ListaSolución.setFillsViewportHeight(true);
+            jScrollPane1 = new JScrollPane(ListaSolución);
+            jScrollPane1.setPreferredSize(new Dimension(500, 300));
+            
+            panel6 = new JPanel();
+            panel6.setLayout(new BoxLayout(panel6, BoxLayout.Y_AXIS));
+            j = new JButton("/\\");
+            i = new JButton("\\/");
+            j.setBackground(Color.WHITE);
+            i.setBackground(Color.WHITE);
+            i.setEnabled(false);
+            j.setEnabled(false);
+            panel6.add(j);
+            panel6.add(i);
+        panel5.setBackground(Color.WHITE);
+        panel5.add(jScrollPane1);
+        panel5.add(panel6);
         //----------------------------------------
 
         panel4 = new JPanel();
         resultadoDec = new JLabel("Resultado: 0");
         resultadoBin = new JTextField();
         resultadoBin.setPreferredSize(new Dimension(250, 20));
+        panel4.setBackground(Color.WHITE);
         panel4.add(resultadoDec);
         panel4.add(resultadoBin);
         //------------------------------
+        mainPanel.setBackground(Color.WHITE);
         mainPanel.add(panel2);
         mainPanel.add(panel);
         mainPanel.add(panel3);
-        mainPanel.add(jScrollPane1);
+        mainPanel.add(panel5);
         mainPanel.add(panel4);
     }
 
@@ -169,7 +234,7 @@ public class VentanaPrincipal extends JFrame {
      * Verifica si los datos ingresados en los JTextfield son válidos
      * @param evt 
      */
-    private void botonResolverActionPerformed(java.awt.event.ActionEvent evt) {
+    private void botonResolverActionPerformed() {
         if (isNumeric(CampoNumUno.getText())) {
             return;
         }
@@ -178,6 +243,7 @@ public class VentanaPrincipal extends JFrame {
         }
         int uno = Integer.parseInt(CampoNumUno.getText());
         int dos = Integer.parseInt(CampoNumDos.getText());
+        calcularMaspasos = checkbox.isSelected();
         UpdateJTable(uno, dos);
     }
 
@@ -190,12 +256,19 @@ public class VentanaPrincipal extends JFrame {
     private void UpdateJTable(int uno, int dos) {
         p = new ImplAlgoritmo();
         removerFilas(modelo);
-        ArrayList<ArrayList<String>> g = p.init(uno, dos);
+        BorrarRes();
+        g = p.init(uno, dos);
+        posicion = 1;
         if (g != null) {
-            for (ArrayList<String> h : g) {
-                modelo.addRow(h.toArray());
+            if(!sel)
+            {
+                for (ArrayList<String> h : g) {
+                    modelo.addRow(h.toArray());
+                }
+                imprimirRes();
+            }else{
+                modelo.addRow(g.get(0).toArray());
             }
-            imprimirRes();
         } else {
             System.out.println("g sin data");
         }
@@ -231,8 +304,11 @@ public class VentanaPrincipal extends JFrame {
             mistery();
         }
     }
-
-
+    
+    private void BorrarRes() {
+        resultadoBin.setText(" ");
+        resultadoDec.setText(" ");
+    }
     /**
      * Limpia el modelo de la tabla
      * @param model 

@@ -122,7 +122,7 @@ public class VetanaExplicación extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                String[] g = {"0","110100","101011","1","010111"," desplazamiento", "000000"};
+                String[] g = {"0","110100","101011","1","010111"," Inicial", "000000"};
                 new VetanaExplicación(g).setVisible(true);
             }
         });
