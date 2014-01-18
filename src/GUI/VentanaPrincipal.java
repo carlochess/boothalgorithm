@@ -3,13 +3,11 @@ package GUI;
 import algoritmobooth.ImplAlgoritmo;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.LayerUI;
+        
 import javax.swing.table.DefaultTableModel;
 
 public class VentanaPrincipal extends JFrame {
@@ -19,25 +17,25 @@ public class VentanaPrincipal extends JFrame {
     //----------
     DefaultListModel<String> listModel;
     JScrollPane jScrollPane1;
-    JTextField CampoNumUno, CampoNumDos, resultadoBin;
+    JFormattedTextField CampoNumUno, CampoNumDos;
+    JTextField resultadoBin;
     JTable ListaSolución;
     JLabel button, button2, resultadoDec;
-    JButton botonResolver, i, j;
-    JPanel mainPanel, panel, panel2, panel3, panel4;
+    JButton botonResolver, botonAbajo, botonArriba;
+    JPanel mainPanel, panel, panel2, panel3, panel4,panel5,panel6;
     Object[][] data;
     DefaultTableModel modelo;
     JMenuItem mi1, mi2;
-    JCheckBox checkbox;
+    JRadioButton pasoApaso, yoResolver, normal;
     ImplAlgoritmo p;
-    boolean sel=false, calcularMaspasos= false;
-    int posicion;
+    int posicion, opcion;// 0 normal, 1 pap, 2 res
     ArrayList<ArrayList<String>> g;
+    JMenuItem mi3;  
+    JComboBox listaDeOperaciones;
+    String[] columna;
     //----------
     // Métodos
     //----------
-    private JPanel panel5;
-    private JPanel panel6;
-
     public VentanaPrincipal() {
         initGUI();
         initMenu();
@@ -69,10 +67,10 @@ public class VentanaPrincipal extends JFrame {
                 botonResolverActionPerformed();
             }
         });
-        j.addActionListener(new ActionListener() {
+        botonArriba.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    if (g != null && calcularMaspasos) {
+                    if (g != null){// && calcularMaspasos) {
                         int longitudMaxima = g.size()-2;
                         if (posicion >1)
                         {
@@ -84,45 +82,47 @@ public class VentanaPrincipal extends JFrame {
             }
         });
         // agregar
-        i.addActionListener(new ActionListener() {
+        botonAbajo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (g != null && calcularMaspasos) {
-                    int longitudMaxima = g.size()-1;
-                        if (posicion <= longitudMaxima)
-                        {
-                            modelo.addRow(g.get(posicion).toArray());
-                            posicion++;
-                            if (posicion == longitudMaxima+1)imprimirRes();
-                        }
-                    } 
+                if (g != null){// && calcularMaspasos) {
+                    if(opcion == 2)
+                    {
+                        agregarLíneaYoRes();
+                    }
+                    else if (opcion == 1)
+                    {
+                        agregarLíneaPaP();
+                    }  
+               }
             }
         });
         ListaSolución.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                int row = ListaSolución.rowAtPoint(e.getPoint());
-                int column = ListaSolución.columnAtPoint(e.getPoint());
-                if (row >= 0 && column==5) {
-                    System.out.println(row);
-                    VetanaExplicación a = new VetanaExplicación(getRowAt(row));
+                if(opcion != 2)
+                {
+                    int row = ListaSolución.rowAtPoint(e.getPoint());
+                    int column = ListaSolución.columnAtPoint(e.getPoint());
+                    if (row >= 0 && column==5) {
+                        //System.out.println("Click en "+ row +" "+column );
+                        new VentExplicacion(getRowAt(row));
+                    }
                 }
             }
             public String[] getRowAt(int row) {
                 String[] result = new String[7];
-                row = (row==0)? 1:row-1;
+                int fila = (row==0)? 0:row-1;
                 for (int i = 0; i < 5; i++) {
-                    result[i] = (String)ListaSolución.getModel().getValueAt(row, i);
+                    result[i] = g.get(fila).get(i);
                 }
-                result[5] = (String)ListaSolución.getModel().getValueAt(row+1, 5);
-                result[6] = (String)ListaSolución.getModel().getValueAt(row+1, 1);
+                result[5] = (row==0)? "Inicial":g.get(fila+1).get(5); // operación actual
+                result[6] = g.get(fila+1).get(1); // Resultado
                 return result;
             }
         });
         mi1.addActionListener(new ActionListener() {
-
             public static final String creditos = "Carlos\nhttps://github.com/carlochess/boothalgorithm/";
-
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JLabel label = new JLabel();
@@ -139,16 +139,48 @@ public class VentanaPrincipal extends JFrame {
                 System.exit(0);
             }
         });
-        
-        checkbox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getItemSelectable() == checkbox) {
-                    sel = checkbox.isSelected();
-                    i.setEnabled(sel);
-                    j.setEnabled(sel);
+        mi3.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                new VentanaConvertidor();
+           }
+        });
+    }
+    private void agregarLíneaYoRes() {
+        int longitudMaxima = g.size()-1;
+        if (posicion <= longitudMaxima)
+        {
+            ArrayList<String> m = g.get(posicion-1);
+            for (int i=0; i< m.size(); i++) {
+                String resp = (String)ListaSolución.getModel().getValueAt(posicion-1, i);
+                if(!m.get(i).equals(resp))
+                {
+                    JOptionPane.showMessageDialog(this, "Lo siento,\nhay un error en "+columna[i]);
+                    return;
                 }
             }
-        });
+            String nueva = g.get(posicion).get(0);
+            posicion++;
+            modelo.addRow(new String[]{nueva,"","","","",""});
+            JOptionPane.showMessageDialog(this, "Muy bien, continua");
+            //System.out.println("Muy bien, continua");
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "Genial, has terminado");
+            botonAbajo.setEnabled(false);
+            imprimirRes();
+        }
+    }
+    private void agregarLíneaPaP() {
+        int longitudMaxima = g.size()-1;
+        if (posicion <= longitudMaxima)
+        {
+            modelo.addRow(g.get(posicion).toArray());
+            posicion++;
+            if (posicion == longitudMaxima+1)imprimirRes();
+        }
     }
 
     /**
@@ -158,22 +190,44 @@ public class VentanaPrincipal extends JFrame {
         
         listModel = new DefaultListModel();
         mainPanel = new JPanel();
+        LayerUI<JFormattedTextField> layerUI = new ValidationLayerUI();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        //----------------------------------------
+        columna = new String[]{"N", "A", "Q", "Q-1", "M", "OP"};
+        //----------------------------------------
+        listaDeOperaciones = new JComboBox();
+        listaDeOperaciones.addItem("Inicial");
+        listaDeOperaciones.addItem("A<~A+M");
+        listaDeOperaciones.addItem("A<~A-M");
+        listaDeOperaciones.addItem("desplazamiento");
         //----------------------------------------
         panel = new JPanel();
         panel.setBorder(new TitledBorder("Numero Dos"));
 
-        CampoNumUno = new JTextField("6", 20);
-        //CampoNumUno.setPreferredSize(new Dimension(100, 20));
-        panel.add(CampoNumUno);
+        CampoNumUno = new JFormattedTextField(){
+            @Override
+            public boolean isEditValid() {
+                return !isNumeric(this.getText());
+            }
+        };
+        CampoNumUno.setColumns(16);
+        CampoNumUno.setFocusLostBehavior(JFormattedTextField.PERSIST);
+        panel.add(new JLayer<>(CampoNumUno, layerUI));
         CampoNumUno.setDragEnabled(true);
         //----------------------------------------
         panel2 = new JPanel();
         panel2.setBorder(new TitledBorder("Numero Uno"));
 
-        CampoNumDos = new JTextField("5", 20);
-        //CampoNumDos.setPreferredSize(new Dimension(100, 20));
-        panel2.add(CampoNumDos);
+        CampoNumDos = new JFormattedTextField(){
+            @Override
+            public boolean isEditValid() {
+                return !isNumeric(this.getText());
+            }
+        };
+        CampoNumDos.setColumns(16);
+        CampoNumDos.setFocusLostBehavior(JFormattedTextField.PERSIST);
+        panel2.add(new JLayer<>(CampoNumDos, layerUI));
+        
         CampoNumDos.setDragEnabled(true);
         panel.setBackground(Color.WHITE);
         panel2.setBackground(Color.WHITE);
@@ -181,17 +235,27 @@ public class VentanaPrincipal extends JFrame {
         panel3 = new JPanel();
         botonResolver = new JButton("Calcular");
         botonResolver.setTransferHandler(new TransferHandler("text"));
-        checkbox = new JCheckBox("Paso a Paso", false);
-        checkbox.setFocusable(false);
+        yoResolver = new JRadioButton("Yo resuelvo", false);
+        pasoApaso = new JRadioButton("Paso a Paso", false);
+        normal =  new JRadioButton("Normal", true);
+        ButtonGroup group = new ButtonGroup();
+        group.add(normal);
+        group.add(pasoApaso);
+        group.add(yoResolver);
         panel3.setBackground(Color.WHITE);
+        panel3.add(normal);
         panel3.add(botonResolver);
-        panel3.add(checkbox);
+        panel3.add(pasoApaso);
+        panel3.add(yoResolver);
         //---------------------------------------- 
         panel5 = new JPanel();
-            
-            String[] columna = new String[]{"N", "A", "Q", "Q-1", "M", "OP"};
+        panel5.setBorder(new TitledBorder("Tabla"));    
+        panel5.setLayout(new BoxLayout(panel5, BoxLayout.X_AXIS));
+        
             modelo = new DefaultTableModel(new Object[0][0], columna);
             ListaSolución = new JTable(modelo);
+            ListaSolución.setBackground(Color.WHITE);
+            ListaSolución.setSelectionBackground(Color.ORANGE);
             ListaSolución.getColumn("N").setPreferredWidth(20);
             ListaSolución.getColumn("Q-1").setPreferredWidth(20);
             ListaSolución.getColumn("OP").setPreferredWidth(150);
@@ -201,15 +265,14 @@ public class VentanaPrincipal extends JFrame {
             
             panel6 = new JPanel();
             panel6.setLayout(new BoxLayout(panel6, BoxLayout.Y_AXIS));
-            j = new JButton("/\\");
-            i = new JButton("\\/");
-            j.setBackground(Color.WHITE);
-            i.setBackground(Color.WHITE);
-            i.setEnabled(false);
-            j.setEnabled(false);
-            panel6.add(j);
-            panel6.add(i);
+            botonArriba = new JButton("/\\");
+            botonAbajo = new JButton("\\/");
+            botonArriba.setBackground(Color.WHITE);
+            botonAbajo.setBackground(Color.WHITE);
+            panel6.add(botonArriba);
+            panel6.add(botonAbajo);
         panel5.setBackground(Color.WHITE);
+        panel5.add(Box.createRigidArea(new Dimension(30,0)));
         panel5.add(jScrollPane1);
         panel5.add(panel6);
         //----------------------------------------
@@ -243,7 +306,7 @@ public class VentanaPrincipal extends JFrame {
         }
         int uno = Integer.parseInt(CampoNumUno.getText());
         int dos = Integer.parseInt(CampoNumDos.getText());
-        calcularMaspasos = checkbox.isSelected();
+        determinarOpcion();
         UpdateJTable(uno, dos);
     }
 
@@ -255,25 +318,46 @@ public class VentanaPrincipal extends JFrame {
      */
     private void UpdateJTable(int uno, int dos) {
         p = new ImplAlgoritmo();
-        removerFilas(modelo);
+        removerFilas();
         BorrarRes();
         g = p.init(uno, dos);
         posicion = 1;
-        if (g != null) {
-            if(!sel)
+        botonAbajo.setEnabled(true);
+        botonArriba.setEnabled(true);
+        removerOpcionesOP();
+        switch(opcion) {
+            case 0: // normal
             {
                 for (ArrayList<String> h : g) {
                     modelo.addRow(h.toArray());
                 }
                 imprimirRes();
-            }else{
-                modelo.addRow(g.get(0).toArray());
+                botonAbajo.setEnabled(false);
+                botonArriba.setEnabled(false);
+                break;
             }
-        } else {
-            System.out.println("g sin data");
+            case 1: // PAP
+            {
+                modelo.addRow(g.get(0).toArray());
+                break;
+            }
+            case 2: // YoRes
+            {
+                botonArriba.setEnabled(false);
+                añadirOpcionesOP();
+                //modelo.addRow(g.get(0).toArray());
+                modelo.addRow(new String[]{"0","","","","","",""});
+                break;
+            }
         }
     }
-
+    public void añadirOpcionesOP() {
+        ListaSolución.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(listaDeOperaciones));
+    }
+    public void removerOpcionesOP() {
+        ListaSolución.getColumnModel().getColumn(5).setCellEditor(null);
+    }
+    //----------------------------------------------------------
     /**
      * Método encargado  de verificar si una cadena puede convertirse
      * en un número.
@@ -282,7 +366,7 @@ public class VentanaPrincipal extends JFrame {
      */
     public boolean isNumeric(String str) {
         try {
-            double d = Double.parseDouble(str);
+            int d = Integer.parseInt(str);
         } catch (NumberFormatException nfe) {
             return true;
         }
@@ -313,17 +397,12 @@ public class VentanaPrincipal extends JFrame {
      * Limpia el modelo de la tabla
      * @param model 
      */
-    private void removerFilas(DefaultTableModel model) {
-        int rows = model.getRowCount();
-        for (int i = rows - 1; i >= 0; i--) {
-            model.removeRow(i);
-        }
+    private void removerFilas() {
+        DefaultTableModel dm = (DefaultTableModel)ListaSolución.getModel();
+        dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
     }
-
-    public static void main(String... args) {
-        VentanaPrincipal p = new VentanaPrincipal();
-    }
-
+    
     private void initMenu() {
         JMenuBar mb = new JMenuBar();
         setJMenuBar(mb);
@@ -333,70 +412,22 @@ public class VentanaPrincipal extends JFrame {
         menu1.add(mi1);
         mi2 = new JMenuItem("Salir");
         menu1.add(mi2);
+        JMenu menu2 = new JMenu("Herramientas");
+        mb.add(menu2);
+        mi3 = new JMenuItem("Convertidor");
+        menu2.add(mi3);
     }
-}
-
-class SpotlightLayerUI extends LayerUI<JPanel> {
-
-    private boolean mActive;
-    private int mX, mY;
-
-    @Override
-    public void installUI(JComponent c) {
-        super.installUI(c);
-        JLayer jlayer = (JLayer) c;
-        jlayer.setLayerEventMask(
-                AWTEvent.MOUSE_EVENT_MASK
-                | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+    
+    public static void main(String... args) {
+        VentanaPrincipal p = new VentanaPrincipal();
     }
 
-    @Override
-    public void uninstallUI(JComponent c) {
-        JLayer jlayer = (JLayer) c;
-        jlayer.setLayerEventMask(0);
-        super.uninstallUI(c);
-    }
-
-    @Override
-    public void paint(Graphics g, JComponent c) {
-        Graphics2D g2 = (Graphics2D) g.create();
-
-        // Paint the view.
-        super.paint(g2, c);
-
-        if (mActive) {
-            // Create a radial gradient, transparent in the middle.
-            java.awt.geom.Point2D center = new java.awt.geom.Point2D.Float(mX, mY);
-            float radius = 72;
-            float[] dist = {0.0f, 1.0f};
-            Color[] colors = {new Color(0.0f, 0.0f, 0.0f, 0.0f), Color.BLACK};
-            RadialGradientPaint p =
-                    new RadialGradientPaint(center, radius, dist, colors);
-            g2.setPaint(p);
-            g2.setComposite(AlphaComposite.getInstance(
-                    AlphaComposite.SRC_OVER, .6f));
-            g2.fillRect(0, 0, c.getWidth(), c.getHeight());
+    private void determinarOpcion() {
+        if(normal.isSelected()){
+            opcion = 0; 
+        }else if(yoResolver.isSelected()){
+            opcion = 2;
         }
-
-        g2.dispose();
-    }
-
-    @Override
-    protected void processMouseEvent(MouseEvent e, JLayer l) {
-        if (e.getID() == MouseEvent.MOUSE_ENTERED) {
-            mActive = true;
-        }
-        if (e.getID() == MouseEvent.MOUSE_EXITED) {
-            mActive = false;
-        }
-        l.repaint();
-    }
-
-    @Override
-    protected void processMouseMotionEvent(MouseEvent e, JLayer l) {
-        Point p = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), l);
-        mX = p.x;
-        mY = p.y;
-        l.repaint();
+        else { opcion = 1;}
     }
 }

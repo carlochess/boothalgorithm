@@ -19,7 +19,7 @@ public class ImplAlgoritmo {
     }
         
     /* Función que convierte de decimal a binario  **/
-    private int[] decABin(int n, int longitud) {
+    public int[] decABin(int n, int longitud) {
         int[] bin = new int[longitud];
         int ctr = longitud-1;
         int num = n;
@@ -35,6 +35,17 @@ public class ImplAlgoritmo {
         }
 
         return bin;
+    }
+    
+    public String decABinS(int n)
+    {
+        int r = rango(n);
+        String g="";
+        for(int i : decABin(n, r))
+        {
+            g+=i;
+        }
+        return g;
     }
     /*Función que halla el número de dígitos necesarios para representar
      un número en complemento a dos*/
@@ -81,7 +92,7 @@ public class ImplAlgoritmo {
         int count = nVeces;
         int m1[] = new int[nVeces];
         ArrayList<ArrayList<String> > arr = new ArrayList<>();
-        arr.add(annadirAlArreglo(a,q,Q1,m," Inicial", 0));
+        arr.add(annadirAlArreglo(a,q,Q1,m,"Inicial", 0));
         int nVecesMenosUna = nVeces-1;
         
         for (int i = 0; i < count; i++) {
@@ -89,18 +100,18 @@ public class ImplAlgoritmo {
             int j = i;
             if (q[nVecesMenosUna] == 0 && Q1 == 1) {
                 a = sumar(a, m1);
-                arr.add(annadirAlArreglo(a,q,Q1,m," A<~A+M", i+1)); 
+                arr.add(annadirAlArreglo(a,q,Q1,m,"A<~A+M", i+1)); 
                 j=-2;
             }
             else if (q[nVecesMenosUna] == 1 && Q1 == 0) {
                 int c[] = complemento(m1);
                 a = sumar(a, c);
-                arr.add(annadirAlArreglo(a,q,Q1,m," A<~A-M", i+1)); 
+                arr.add(annadirAlArreglo(a,q,Q1,m,"A<~A-M", i+1)); 
                 j =-2;
             }
             Q1 = q[nVecesMenosUna];
             desplazamientoAritmetico(a, q);
-            arr.add(annadirAlArreglo(a,q,Q1,m," desplazamiento", j+1));
+            arr.add(annadirAlArreglo(a,q,Q1,m,"desplazamiento", j+1));
         }
         return arr;
     }
