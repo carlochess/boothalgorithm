@@ -21,7 +21,7 @@ public class VentanaConvertidor extends JDialog {
     JPanel mainPanel, panel, panel2, panel3;
     JFormattedTextField decimal,binario;
     JButton binTodec, decTobin;
-
+    
     public VentanaConvertidor() {
         mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -71,7 +71,7 @@ public class VentanaConvertidor extends JDialog {
         add(mainPanel);
         initListener();
         pack();
-        setTitle("Operación");
+        setTitle("Convertidor");
         setSize(new Dimension(400, 200));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);

@@ -162,7 +162,7 @@ public class ImplAlgoritmo {
         temp.add(g);g="";
         temp.add(string);
         return temp;
-    } 
+    }
     
     /*------------------------------------------*/
     // Función inicial

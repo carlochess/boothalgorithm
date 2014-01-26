@@ -7,9 +7,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 
-public class VentExplicacion  extends JDialog{
+public class VentanaExplicacion  extends JDialog{
 
-    public VentExplicacion(String[] rowAt) {
+    public VentanaExplicacion(String[] rowAt) {
         JScrollPane jScrollPane1 = new JScrollPane();
         JTextPane panelTexto = new JTextPane();
         panelTexto.setContentType("text/html");
