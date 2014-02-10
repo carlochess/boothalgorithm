@@ -25,6 +25,6 @@ public class SplashScreen extends JWindow {
   }
 
   public static void main(String[] args) {
-    SplashScreen splash = new SplashScreen();
+      SplashScreen splash = new SplashScreen();
   }
 }

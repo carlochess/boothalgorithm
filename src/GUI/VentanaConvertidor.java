@@ -29,7 +29,7 @@ public class VentanaConvertidor extends JDialog {
         panel = new JPanel();
         panel.setBorder(new TitledBorder("Decimal"));
         
-        LayerUI<JFormattedTextField> layerUI = new ValidationLayerUI();
+        LayerUI<JFormattedTextField> layerUI = new ValidadorLayerUI();
         
         decimal = new JFormattedTextField(){
             @Override

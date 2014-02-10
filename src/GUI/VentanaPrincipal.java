@@ -28,7 +28,7 @@ public class VentanaPrincipal extends JFrame {
     public static final String OP_SUMA = "A<~A+M";
     public static final String OP_INICIAL = "Inicial";
     final String[] columna = new String[]{"N", "A", "Q", "Q-1", "M", "OP"};;
-    final WaitLayerUI layerTable = new WaitLayerUI();
+    final ErrorLayerUI layerTable = new ErrorLayerUI();
     //----------
     // Atributos
     //----------
@@ -70,7 +70,7 @@ public class VentanaPrincipal extends JFrame {
 
         listModel = new DefaultListModel();
         mainPanel = new JPanel();
-        LayerUI<JFormattedTextField> layerUI = new ValidationLayerUI();
+        LayerUI<JFormattedTextField> layerUI = new ValidadorLayerUI();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         //----------------------------------------
         
@@ -283,7 +283,8 @@ public class VentanaPrincipal extends JFrame {
                         }
                     });
                     stopper.setRepeats(false);
-                    layerTable.start(h);
+                    layerTable.start(tablaSolucion,posicion - 1, i);
+                    
                     if (!stopper.isRunning()) {
                         stopper.start();
                     }
@@ -430,7 +431,7 @@ public class VentanaPrincipal extends JFrame {
     }
     private void mistery() {
         remove(mainPanel);
-        LayerUI<JPanel> layerUI = new SpotlightLayerUI();
+        LayerUI<JPanel> layerUI = new SorpresaLayerUI();
         JLayer<JPanel> jlayer = new JLayer<>(mainPanel, layerUI);
         add(jlayer);
         repaint();
